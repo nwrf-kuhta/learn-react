@@ -1,8 +1,15 @@
 import React from "react";
 import Square from './Square';
+import { SquareValueType } from "../interface";
 
-class Board extends React.Component {
-    renderSquare(i, isHighlight = false) {
+interface BoardProps {
+    squares: SquareValueType[];
+    onClick: (i: number) => void;
+    highlightCells: number[];
+}
+
+class Board extends React.Component<BoardProps> {
+    renderSquare(i: number, isHighlight: boolean = false) {
         return (
             <Square
                 isHighlight={isHighlight}

@@ -1,6 +1,13 @@
 import React from "react";
+import { SquareValueType } from "../interface";
 
-function Square(props) {
+interface SquareProps {
+    value: SquareValueType;
+    onClick: () => void;
+    isHighlight: boolean;
+}
+
+function Square(props: SquareProps) {
     return (
         <button
             className={`square ${props.isHighlight ? 'highlight' : ''}`}
