@@ -1,3 +1,5 @@
 .idea
+.env
 .eslintcache
+build/*
 node_modules/*
