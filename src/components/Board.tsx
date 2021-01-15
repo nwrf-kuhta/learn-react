@@ -8,7 +8,7 @@ interface BoardProps {
     highlightCells: number[];
 }
 
-function Board(props: BoardProps) {
+const Board: React.FC<BoardProps> = (props) => {
     const renderSquare = (i: number, isHighlight: boolean = false) => {
         return (
             <Square
