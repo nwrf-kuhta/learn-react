@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Board from './Board';
+import Info from './Info';
 import { History, SquareValueType } from '../interface';
 
 const Game: React.FC = () => {
@@ -73,30 +74,6 @@ const Game: React.FC = () => {
 
     const current = history[stepNumber];
     const settlement = calculateWinner(current.squares);
-    const moves = history.map((step, move) => {
-        const desc = move ? 'Move #' + move + '(' + step.col + ', ' + step.row + ')' : 'Game start';
-        return (
-            <li key={move}>
-                <button
-                    onClick={() => jumpTo(move)}
-                    className={stepNumber === move ? 'bold' : ''}
-                >
-                    {desc}
-                </button>
-            </li>
-        );
-    });
-
-    let status;
-    if (settlement) {
-        if (settlement.isDraw) {
-            status = 'Draw';
-        } else {
-            status = 'Winner: ' + settlement.winner;
-        }
-    } else {
-        status = 'Next player: ' + (xIsNext ? 'X' : 'O');
-    }
 
     return (
         <div className="game">
@@ -108,11 +85,15 @@ const Game: React.FC = () => {
                 />
             </div>
             <div className="game-info">
-                <div>{status}</div>
-                <div>
-                    <button onClick={() => toggleAsc()}>ASC⇆DESC</button>
-                </div>
-                <ol>{isAsc ? moves : moves.reverse()}</ol>
+                <Info
+                    history={history}
+                    stepNumber={stepNumber}
+                    xIsNext={xIsNext}
+                    isAsc={isAsc}
+                    settlement={settlement}
+                    jumpTo={jumpTo}
+                    toggleAsc={toggleAsc}
+                />
             </div>
         </div>
     );
