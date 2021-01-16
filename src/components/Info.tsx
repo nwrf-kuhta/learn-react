@@ -15,15 +15,7 @@ interface InfoProps {
     toggleAsc: () => void;
 }
 
-const Info: React.FC<InfoProps> = ({
-    history,
-    stepNumber,
-    xIsNext,
-    isAsc,
-    settlement,
-    jumpTo,
-    toggleAsc
-}) => {
+const Info: React.FC<InfoProps> = (props) => {
     const makeStatus = (
         settlement: {
             isDraw: boolean,
@@ -41,20 +33,20 @@ const Info: React.FC<InfoProps> = ({
         return 'Winner: ' + settlement.winner;
     }
 
-    const _history = history.slice(0, history.length);
+    const _history = props.history.slice(0, props.history.length);
     const convertedHistory = _history.map((step, move) => {
         return {
             description: move ? 'Move #' + move + '(' + step.col + ', ' + step.row + ')' : 'Game start',
             move: move,
         }
     });
-    const moves = isAsc ? convertedHistory : convertedHistory.reverse();
+    const moves = props.isAsc ? convertedHistory : convertedHistory.reverse();
 
     return (
         <div>
-            <div>{makeStatus(settlement, xIsNext)}</div>
+            <div>{makeStatus(props.settlement, props.xIsNext)}</div>
             <div>
-                <button onClick={() => toggleAsc()}>ASC⇆DESC</button>
+                <button onClick={() => props.toggleAsc()}>ASC⇆DESC</button>
             </div>
             <ol>
                 {
@@ -62,8 +54,8 @@ const Info: React.FC<InfoProps> = ({
                         return (
                             <li key={move}>
                                 <button
-                                    onClick={() => jumpTo(history.move)}
-                                    className={stepNumber === history.move ? 'bold' : ''}
+                                    onClick={() => props.jumpTo(history.move)}
+                                    className={props.stepNumber === history.move ? 'bold' : ''}
                                 >
                                     {history.description}
                                 </button>

@@ -9,17 +9,6 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = (props) => {
-    const renderSquare = (i: number, isHighlight: boolean = false) => {
-        return (
-            <Square
-                key={i}
-                value={props.squares[i]}
-                onClick={() => props.onClick(i)}
-                isHighlight={isHighlight}
-            />
-        );
-    }
-
     return (
         <div>
             {
@@ -28,8 +17,14 @@ const Board: React.FC<BoardProps> = (props) => {
                         <div className="board-row" key={i}>
                             {
                                 Array(3).fill(0).map((col, j) => {
+                                    const key = i * 3 + j;
                                     return (
-                                        renderSquare(i * 3 + j, props.highlightCells.indexOf(i * 3 + j) !== -1)
+                                        <Square
+                                            key={key}
+                                            value={props.squares[key]}
+                                            onClick={() => props.onClick(key)}
+                                            isHighlight={props.highlightCells.indexOf(key) !== -1}
+                                        />
                                     )
                                 })
                             }
