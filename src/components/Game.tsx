@@ -1,62 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import Board from './Board';
+import Info from './Info';
 import { History, SquareValueType } from '../interface';
 
-interface GameState {
-    history: History[];
-    stepNumber: number;
-    xIsNext: boolean;
-    isAsc: boolean;
-}
+const Game: React.FC = () => {
+    const [history, setHistory] = useState<History[]>([{
+        squares: Array(9).fill(null),
+        col: null,
+        row: null,
+    }]);
+    const [stepNumber, setStepNumber] = useState<number>(0);
+    const [xIsNext, setXIsNext] = useState<boolean>(true);
+    const [isAsc, setIsAsc] = useState<boolean>(true);
 
-class Game extends React.Component<{}, GameState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            history: [{
-                squares: Array(9).fill(null),
-                col: null,
-                row: null,
-            }],
-            stepNumber: 0,
-            xIsNext: true,
-            isAsc: true,
-        }
-    }
-
-    handleClick(i: number) {
-        const history = this.state.history.slice(0, this.state.stepNumber + 1);
-        const current = history[history.length - 1];
+    const handleClick = (i: number) => {
+        const _history = history.slice(0, stepNumber + 1);
+        const current = _history[_history.length - 1];
         const squares = current.squares.slice();
-        if (this.calculateWinner(squares) || squares[i]) {
+        if (calculateWinner(squares) || squares[i]) {
             return;
         }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            history: history.concat([{
-                squares: squares,
-                col: (i % 3) + 1,
-                row: Math.floor(i / 3) + 1,
-            }]),
-            stepNumber: history.length,
-            xIsNext: !this.state.xIsNext,
-        });
+        squares[i] = xIsNext ? 'X' : 'O';
+        setHistory(_history.concat({
+            squares: squares,
+            col: (i % 3) + 1,
+            row: Math.floor(i / 3) + 1,
+        }));
+        setStepNumber(_history.length);
+        setXIsNext(!xIsNext);
     }
 
-    jumpTo(step: number) {
-        this.setState({
-            stepNumber: step,
-            xIsNext: (step % 2) === 0,
-        });
+    const jumpTo = (step: number) => {
+        setStepNumber(step);
+        setXIsNext((step % 2) === 0);
     }
 
-    toggleAsc() {
-        this.setState({
-            isAsc: !this.state.isAsc,
-        });
+    const toggleAsc = () => {
+        setIsAsc(!isAsc);
     }
 
-    calculateWinner(squares: Array<SquareValueType>) {
+    const calculateWinner = (squares: SquareValueType[]) => {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -89,55 +72,31 @@ class Game extends React.Component<{}, GameState> {
         return null;
     }
 
-    render() {
-        const history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const settlement = this.calculateWinner(current.squares);
+    const current = history[stepNumber];
+    const settlement = calculateWinner(current.squares);
 
-        const moves = history.map((step, move) => {
-            const desc = move ? 'Move #' + move + '(' + step.col + ', ' + step.row + ')' : 'Game start';
-            return (
-                <li key={move}>
-                    <button
-                        onClick={() => this.jumpTo(move)}
-                        className={this.state.stepNumber === move ? 'bold' : ''}
-                    >
-                        {desc}
-                    </button>
-                </li>
-            );
-        });
-
-        let status;
-        if (settlement) {
-            if (settlement.isDraw) {
-                status = 'Draw';
-            } else {
-                status = 'Winner: ' + settlement.winner;
-            }
-        } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-        }
-
-        return (
-            <div className="game">
-                <div className="game-board">
-                    <Board
-                        squares={current.squares}
-                        onClick={(i) => this.handleClick(i)}
-                        highlightCells={settlement ? settlement.line : []}
-                    />
-                </div>
-                <div className="game-info">
-                    <div>{status}</div>
-                    <div>
-                        <button onClick={() => this.toggleAsc()}>ASC⇆DESC</button>
-                    </div>
-                    <ol>{this.state.isAsc ? moves : moves.reverse()}</ol>
-                </div>
+    return (
+        <div className="game">
+            <div className="game-board">
+                <Board
+                    squares={current.squares}
+                    onClick={(i) => handleClick(i)}
+                    highlightCells={settlement ? settlement.line : []}
+                />
             </div>
-        );
-    }
+            <div className="game-info">
+                <Info
+                    history={history}
+                    stepNumber={stepNumber}
+                    xIsNext={xIsNext}
+                    isAsc={isAsc}
+                    settlement={settlement}
+                    jumpTo={jumpTo}
+                    toggleAsc={toggleAsc}
+                />
+            </div>
+        </div>
+    );
 }
 
 export default Game;

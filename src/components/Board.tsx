@@ -8,39 +8,32 @@ interface BoardProps {
     highlightCells: number[];
 }
 
-class Board extends React.Component<BoardProps> {
-    renderSquare(i: number, isHighlight: boolean = false) {
-        return (
-            <Square
-                isHighlight={isHighlight}
-                key={i}
-                value={this.props.squares[i]}
-                onClick={() => this.props.onClick(i)}
-            />
-        );
-    }
-
-    render() {
-        return (
-            <div>
-                {
-                    Array(3).fill(0).map((row, i) => {
-                        return (
-                            <div className="board-row" key={i}>
-                                {
-                                    Array(3).fill(0).map((col, j) => {
-                                        return (
-                                            this.renderSquare(i * 3 + j, this.props.highlightCells.indexOf(i * 3 + j) !== -1)
-                                        )
-                                    })
-                                }
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        );
-    }
+const Board: React.FC<BoardProps> = (props) => {
+    return (
+        <div>
+            {
+                Array(3).fill(0).map((row, i) => {
+                    return (
+                        <div className="board-row" key={i}>
+                            {
+                                Array(3).fill(0).map((col, j) => {
+                                    const key = i * 3 + j;
+                                    return (
+                                        <Square
+                                            key={key}
+                                            value={props.squares[key]}
+                                            onClick={() => props.onClick(key)}
+                                            isHighlight={props.highlightCells.indexOf(key) !== -1}
+                                        />
+                                    )
+                                })
+                            }
+                        </div>
+                    )
+                })
+            }
+        </div>
+    );
 }
 
 export default Board;
